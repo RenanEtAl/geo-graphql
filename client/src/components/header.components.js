@@ -3,7 +3,8 @@ import { withStyles } from "@material-ui/core/styles";
 import Context from "../context";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
-import Map from "@material-ui/icons/Map";
+import MapIcon from "@material-ui/icons/Map";
+import Signout from "./Auth/signout.auth";
 import Typography from "@material-ui/core/Typography";
 
 const Header = ({ classes }) => {
@@ -44,6 +45,8 @@ const Header = ({ classes }) => {
             </Typography>
           </div>
         )}
+
+        <Signout />
       </AppBar>
     </div>
   );
