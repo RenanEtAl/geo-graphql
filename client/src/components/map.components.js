@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { withStyles } from "@material-ui/core/styles";
 // import Button from "@material-ui/core/Button";
 // import Typography from "@material-ui/core/Typography";
@@ -7,6 +7,7 @@ import { withStyles } from "@material-ui/core/styles";
 import ReactMapGL, { NavigationControl } from "react-map-gl";
 import { Marker } from "mapbox-gl";
 import PinIcon from "./pin-icon.components";
+import Context from "../context";
 
 const INITIAL_VIEWPORT = {
   latitude: 37.7577,
@@ -15,6 +16,7 @@ const INITIAL_VIEWPORT = {
 };
 
 const Map = ({ classes }) => {
+  const { state, dispatch } = useContext(Context);
   const [view, setViewport] = useState(INITIAL_VIEWPORT);
 
   const [userPosition, setUserPosition] = useState(null);
@@ -31,6 +33,19 @@ const Map = ({ classes }) => {
         setUserPosition({ latitude, longitude });
       });
     }
+  };
+
+  const handleMapClick = ({ lngLat, leftButton }) => {
+    //console.log(event)
+    if (!leftButton) return;
+    if (!state.draft) {
+      dispatch({ type: "CREATE_DRAFT" });
+    }
+    const [longitude, latitude] = lngLat;
+    dispatch({
+      type: "UPDATE_DRAFT_LOCATION",
+      payload: { longitude, latitude },
+    });
   };
   return (
     <div className={classes.root}>
@@ -59,6 +74,18 @@ const Map = ({ classes }) => {
             offsetTop={-37}
           >
             <PinIcon size={40} color="red" />
+          </Marker>
+        )}
+
+        {/**Draft Pin */}
+        {state.draft && (
+          <Marker
+            latitude={state.draft.latitude}
+            longitude={state.draft.longitude}
+            offsetLeft={-19}
+            offsetTop={-37}
+          >
+            <PinIcon size={40} color="hotpink" />
           </Marker>
         )}
       </ReactMapGL>
