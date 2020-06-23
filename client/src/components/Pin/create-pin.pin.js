@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState , useContext} from "react";
 import { withStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
@@ -7,11 +7,30 @@ import AddAPhotoIcon from "@material-ui/icons/AddAPhotoTwoTone";
 import LandscapeIcon from "@material-ui/icons/LandscapeOutlined";
 import ClearIcon from "@material-ui/icons/Clear";
 import SaveIcon from "@material-ui/icons/SaveTwoTone";
+import Context from "../../context";
 
 const CreatePin = ({ classes }) => {
+
+  const {state, dispatch} = useContext(Context)
+
   const [title, setTitle] = useState("");
   const [image, setImage] = useState("");
   const [content, setContent] = useState("");
+
+  const handleDeleteDraft = () => {
+    setTitle('')
+    setImage('')
+    setContent('')
+
+    dispatch({type: 'DELETE_DRAFT'})
+
+
+  }
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    console.log({ title, image, content });
+  };
   return (
     <form className={classes.form}>
       <Typography
@@ -27,7 +46,7 @@ const CreatePin = ({ classes }) => {
             name="title"
             label="Title"
             placeholder="Insert pin title"
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={(event) => setTitle(event.target.value)}
           />
           <input
             accept="image/*"
@@ -56,7 +75,7 @@ const CreatePin = ({ classes }) => {
             margin="normal"
             fullWidth
             variant="outlined"
-            onChange={(e) => setContent(e.target.value)}
+            onChange={(event) => setContent(event.target.value)}
           />
         </div>
         <div>
