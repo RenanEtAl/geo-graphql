@@ -8,6 +8,7 @@ import ReactMapGL, { NavigationControl } from "react-map-gl";
 import { Marker } from "mapbox-gl";
 import PinIcon from "./pin-icon.components";
 import Context from "../context";
+import Blog from "./blog.components";
 
 const INITIAL_VIEWPORT = {
   latitude: 37.7577,
@@ -89,6 +90,8 @@ const Map = ({ classes }) => {
           </Marker>
         )}
       </ReactMapGL>
+      {/* Blog Area to add Pin Content */}
+      <Blog />
     </div>
   );
 };
