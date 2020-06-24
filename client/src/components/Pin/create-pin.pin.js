@@ -10,12 +10,16 @@ import ClearIcon from "@material-ui/icons/Clear";
 import SaveIcon from "@material-ui/icons/SaveTwoTone";
 import Context from "../../context";
 
+import { GraphQLClient } from "graphql-request";
+import { CREATE_PIN_MUTATION } from "../../graphql/mutations.graphql";
+
 const CreatePin = ({ classes }) => {
   const { state, dispatch } = useContext(Context);
 
   const [title, setTitle] = useState("");
   const [image, setImage] = useState("");
   const [content, setContent] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const handleImageUpload = async () => {
     const data = new FormData();
@@ -40,9 +44,38 @@ const CreatePin = ({ classes }) => {
   };
 
   const handleSubmit = async (event) => {
-    event.preventDefault();
-    const url = await handleImageUpload();
-    console.log({ title, image, content });
+    try {
+      event.preventDefault();
+      setSubmitting(true);
+      const idToken = window.GamepadHapticActuator.auth2
+        .getAuthInstance()
+        .currentUser.get()
+        .getAuthResponse().id_token;
+      new GraphQLClient("http://localhost:4000/graphql", {
+        headers: {
+          authorization: idToken,
+        },
+      });
+      const { latitude, longitude } = state.draft;
+      const variables = {
+        title,
+        image: url,
+        content,
+        latitude,
+        longitude,
+      };
+      const { createPin } = await client.request(
+        CREATE_PIN_MUTATION,
+        variables
+      );
+      const url = await handleImageUpload();
+      // console.log({ title, image, content });
+      console.log("pin created");
+      handleDeleteDraft(); // set state.draft to null
+    } catch (err) {
+      setSubmitting(false);
+      console.error("error creating pin", err);
+    }
   };
   return (
     <form className={classes.form}>
