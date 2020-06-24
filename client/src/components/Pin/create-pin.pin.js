@@ -12,9 +12,12 @@ import Context from "../../context";
 
 import { GraphQLClient } from "graphql-request";
 import { CREATE_PIN_MUTATION } from "../../graphql/mutations.graphql";
+import { useClient } from "../../client";
 
 const CreatePin = ({ classes }) => {
   const { state, dispatch } = useContext(Context);
+  // custom hook
+  const client = useClient();
 
   const [title, setTitle] = useState("");
   const [image, setImage] = useState("");
@@ -47,15 +50,20 @@ const CreatePin = ({ classes }) => {
     try {
       event.preventDefault();
       setSubmitting(true);
-      const idToken = window.GamepadHapticActuator.auth2
+      const idToken = window.gapi.auth2
         .getAuthInstance()
         .currentUser.get()
         .getAuthResponse().id_token;
-      new GraphQLClient("http://localhost:4000/graphql", {
-        headers: {
-          authorization: idToken,
-        },
-      });
+
+      // using the custom hook instead  
+      // const client = new GraphQLClient("http://localhost:4000/graphql", {
+      //   headers: {
+      //     authorization: idToken,
+      //   },
+      // });
+
+
+      const url = await handleImageUpload();
       const { latitude, longitude } = state.draft;
       const variables = {
         title,
@@ -68,7 +76,7 @@ const CreatePin = ({ classes }) => {
         CREATE_PIN_MUTATION,
         variables
       );
-      const url = await handleImageUpload();
+
       // console.log({ title, image, content });
       console.log("pin created");
       handleDeleteDraft(); // set state.draft to null
