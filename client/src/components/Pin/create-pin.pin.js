@@ -55,13 +55,12 @@ const CreatePin = ({ classes }) => {
         .currentUser.get()
         .getAuthResponse().id_token;
 
-      // using the custom hook instead  
+      // using the custom hook instead
       // const client = new GraphQLClient("http://localhost:4000/graphql", {
       //   headers: {
       //     authorization: idToken,
       //   },
       // });
-
 
       const url = await handleImageUpload();
       const { latitude, longitude } = state.draft;
@@ -79,6 +78,7 @@ const CreatePin = ({ classes }) => {
 
       // console.log({ title, image, content });
       console.log("pin created");
+      dispatch({ type: "CREATE_PIN", payload: createPi });
       handleDeleteDraft(); // set state.draft to null
     } catch (err) {
       setSubmitting(false);

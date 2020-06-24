@@ -9,6 +9,8 @@ import { Marker } from "mapbox-gl";
 import PinIcon from "./pin-icon.components";
 import Context from "../context";
 import Blog from "./blog.components";
+import { useClient } from "../client";
+import { GET_PINS_QUERY } from "../graphql/queries.graphql";
 
 const INITIAL_VIEWPORT = {
   latitude: 37.7577,
@@ -17,9 +19,15 @@ const INITIAL_VIEWPORT = {
 };
 
 const Map = ({ classes }) => {
+  const client = useClient();
   const { state, dispatch } = useContext(Context);
-  const [view, setViewport] = useState(INITIAL_VIEWPORT);
 
+  // getting/displaying created pins
+  useEffect(() => {
+    getPins();
+  }, []);
+
+  const [viewport, setViewport] = useState(INITIAL_VIEWPORT);
   const [userPosition, setUserPosition] = useState(null);
 
   useEffect(() => {
@@ -47,6 +55,12 @@ const Map = ({ classes }) => {
       type: "UPDATE_DRAFT_LOCATION",
       payload: { longitude, latitude },
     });
+  };
+
+  const getPins = async () => {
+    const { getPins } = await client.request(GET_PINS_QUERY);
+    //console.log({ getPins });
+    dispatch({ type: "GET_PINS", payload: getPins });
   };
   return (
     <div className={classes.root}>
@@ -89,6 +103,23 @@ const Map = ({ classes }) => {
             <PinIcon size={40} color="hotpink" />
           </Marker>
         )}
+
+        {/**Created Pins */}
+        {state.pins.map((pin) => (
+          <Marker
+            key={pin._id}
+            latitude={pin.latitude}
+            longitude={pin.longitude}
+            offsetLeft={-19}
+            offsetTop={-37}
+          >
+            <PinIcon
+              onClick={() => handleSelectPin(pin)}
+              size={40}
+              color={highlightNewPin(pin)}
+            />
+          </Marker>
+        ))}
       </ReactMapGL>
       {/* Blog Area to add Pin Content */}
       <Blog />
