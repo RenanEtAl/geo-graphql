@@ -2,11 +2,11 @@ import React, { useState, useEffect, useContext } from "react";
 import { withStyles } from "@material-ui/core/styles";
 
 import differenceInMinutes from "date-fns/difference_in_minutes";
-// import Button from "@material-ui/core/Button";
-// import Typography from "@material-ui/core/Typography";
+import Button from "@material-ui/core/Button";
+import Typography from "@material-ui/core/Typography";
 // import DeleteIcon from "@material-ui/icons/DeleteTwoTone";
 // mapbox
-import ReactMapGL, { NavigationControl } from "react-map-gl";
+import ReactMapGL, { NavigationControl, Popup, Marker } from "react-map-gl";
 import { Marker } from "mapbox-gl";
 import PinIcon from "./pin-icon.components";
 import Context from "../context";
@@ -36,6 +36,8 @@ const Map = ({ classes }) => {
     getUserPosition();
   }, []);
 
+  // pin popups
+  const [popup, setPopup] = useState(null);
   const getUserPosition = () => {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition((position) => {
@@ -72,6 +74,13 @@ const Map = ({ classes }) => {
 
     return isNewPin ? "limegreen" : "darkblue";
   };
+
+  const handleSelectPin = (pin) => {
+    setPopup(pin);
+    dispatch({ type: "SET_PIN", payload: pin });
+  };
+
+  const isAuthUser = () => state.currentUser._id === popup.autor._id
   return (
     <div className={classes.root}>
       <ReactMapGL
@@ -130,6 +139,33 @@ const Map = ({ classes }) => {
             />
           </Marker>
         ))}
+
+        {/** Popup Dialog for Created Pins */}
+        {popup && (
+          <Popup
+            anchor="top"
+            latitude={popup.latitude}
+            longitude={popup.longitude}
+            closeOnClick={false}
+            onClose={() => setPopup(null)}
+          >
+            <img
+              className={classes.popupImage}
+              src={popup.image}
+              alt={popup.title}
+            />
+            <div className={classes.popupTab}>
+              <Typography>
+                {popup.latitude.toFixed(6)}, {popup.longitude.toFixed(6)}
+              </Typography>
+              {isAuthUser() && (
+                <Button onClick={() => handleDeletePin(popup)}>
+                  <DeleteIcon className={classes.deleteIcon} />
+                </Button>
+              )}
+            </div>
+          </Popup>
+        )}
       </ReactMapGL>
       {/* Blog Area to add Pin Content */}
       <Blog />
