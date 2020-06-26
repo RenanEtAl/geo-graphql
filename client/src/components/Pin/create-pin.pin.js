@@ -77,8 +77,9 @@ const CreatePin = ({ classes }) => {
       );
 
       // console.log({ title, image, content });
-      console.log("pin created");
-      dispatch({ type: "CREATE_PIN", payload: createPi });
+
+      // console.log("pin created"); // handled by subscription now in map component
+      // dispatch({type: 'CREATE_PIN', payload: createPin}) // handled by subscription now in map component
       handleDeleteDraft(); // set state.draft to null
     } catch (err) {
       setSubmitting(false);
