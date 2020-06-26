@@ -9,15 +9,21 @@ import PinContent from "./Pin/PinContent";
 
 const Blog = ({ classes }) => {
   const { state } = useContext(Context);
-  const { draft } = state;
+  const { draft, currentPin } = state;
 
   let BlogContent;
-  if (!draft) {
+  // if the user hasn't set a draft pin
+  if (!draft && !currentPin) {
     // no content
     BlogContent = NoContent;
-  } else if (draft) {
+    // if the user hasn't sent down a draft pin and selected a created pin
+  } else if (draft && !currentPin) {
     // display create pin component
     BlogContent = CreatePin;
+    // if the user set down the draft pin cause they want to add a new pin and there's no current pin
+  } else if (!draft && currentPin) {
+    // show pin content (image, etc.)
+    BlogContent = PinContent;
   }
   return (
     <Paper className={classes.root}>
