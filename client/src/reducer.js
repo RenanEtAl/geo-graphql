@@ -60,6 +60,7 @@ export default function reducer(state, { type, payload }) {
       const filteredPins = state.pins.filter(
         (pin) => pin._id !== deletedPin._id
       );
+      // if the user has current pin in global state
       if (state.currentPin) {
         const isCurrentPin = deletedPin._id === state.currentPin._id;
         if (isCurrentPin) {
@@ -70,6 +71,7 @@ export default function reducer(state, { type, payload }) {
           };
         }
       }
+      // leave the current pins as it is
       return {
         ...state,
         pins: filteredPins,
