@@ -14,11 +14,13 @@ import { GraphQLClient } from "graphql-request";
 import { CREATE_PIN_MUTATION } from "../../graphql/mutations.graphql";
 import { useClient } from "../../client";
 
+import { unstable_useMediaQuery as useMediaQuery } from "@material-ui/core/useMediaQuery";
+
 const CreatePin = ({ classes }) => {
   const { state, dispatch } = useContext(Context);
   // custom hook
   const client = useClient();
-
+  const mobileSize = useMediaQuery("(max-width: 650px)");
   const [title, setTitle] = useState("");
   const [image, setImage] = useState("");
   const [content, setContent] = useState("");
@@ -126,7 +128,7 @@ const CreatePin = ({ classes }) => {
             name="content"
             label="Content"
             multiline
-            rows="6"
+            rows={mobileSize ? "3" : "6"}
             margin="normal"
             fullWidth
             variant="outlined"

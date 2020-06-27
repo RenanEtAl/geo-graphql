@@ -23,6 +23,9 @@ import {
   PIN_ADDED_SUBSCRIPTION,
 } from "../graphql/subscriptions.graphql";
 
+// mobile support
+import { unstable_useMediaQuery as useMediaQuery } from "@material-ui/core/useMediaQuery";
+
 const INITIAL_VIEWPORT = {
   latitude: 37.7577,
   longitude: -122.4376,
@@ -31,6 +34,7 @@ const INITIAL_VIEWPORT = {
 
 const Map = ({ classes }) => {
   const client = useClient();
+  const mobileSize = useMediaQuery("(max-width: 650px)");
   const { state, dispatch } = useContext(Context);
 
   // getting/displaying created pins
@@ -100,13 +104,15 @@ const Map = ({ classes }) => {
   const isAuthUser = () => state.currentUser._id === popup.autor._id;
 
   return (
-    <div className={classes.root}>
+    <div className={mobileSize ? classes.rootMobile : classes.root}>
       <ReactMapGL
         mapboxApiAccessToken="pk.eyJ1IjoidG9yYmpvcm4tbWFwIiwiYSI6ImNrYnF6ZThtYzEzNnQydGp5c280ODk2aG4ifQ.q0wbmqd85_eso_dKuqtlNg"
         width="100vw"
         height="calc(100vh - 64px)"
         mapStyle="mapbox://styles/mapbox/streets-v9"
         onViewportChange={(newViewport) => setViewport(newViewport)}
+        scrollZoom={!mobileSize}
+        onClick={handleMapClick}
         {...viewport}
       >
         {/*  NavigationControl */}

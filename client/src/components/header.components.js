@@ -7,46 +7,52 @@ import MapIcon from "@material-ui/icons/Map";
 import Signout from "./Auth/signout.auth";
 import Typography from "@material-ui/core/Typography";
 
+import { unstable_useMediaQuery as useMediaQuery } from "@material-ui/core/useMediaQuery";
+
 const Header = ({ classes }) => {
   const { state } = useContext(Context);
-  const { currenUser } = state;
+  const { currentUser } = state;
+
+  const mobileSize = useMediaQuery("(max-width: 650px)");
   return (
     <div className={classes.root}>
       <AppBar position="static">
-        {/**Title/logo */}
-        <div className={classes.grow}>
-          <MapIcon className={classes.icon} />
-          <Typography
-            className={mobileSize ? classes.mobile : ""}
-            component="h1"
-            variant="h6"
-            color="inherit"
-            noWrap
-          >
-            GeoPins
-          </Typography>
-        </div>
-
-        {/* Current User Info */}
-        {currentUser && (
+        <Toolbar>
+          {/**Title/logo */}
           <div className={classes.grow}>
-            <img
-              className={classes.picture}
-              src={currentUser.picture}
-              alt={currentUser.name}
-            />
+            <MapIcon className={classes.icon} />
             <Typography
               className={mobileSize ? classes.mobile : ""}
-              variant="h5"
+              component="h1"
+              variant="h6"
               color="inherit"
               noWrap
             >
-              {currentUser.name}
+              GeoPins
             </Typography>
           </div>
-        )}
 
-        <Signout />
+          {/* Current User Info */}
+          {currentUser && (
+            <div className={classes.grow}>
+              <img
+                className={classes.picture}
+                src={currentUser.picture}
+                alt={currentUser.name}
+              />
+              <Typography
+                className={mobileSize ? classes.mobile : ""}
+                variant="h5"
+                color="inherit"
+                noWrap
+              >
+                {currentUser.name}
+              </Typography>
+            </div>
+          )}
+
+          <Signout />
+        </Toolbar>
       </AppBar>
     </div>
   );
